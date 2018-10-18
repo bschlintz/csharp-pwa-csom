@@ -1,8 +1,6 @@
+using Microsoft.ProjectServer.Client;
+using OfficeDevPnP.Core.Utilities;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace csharp_pwa_csom
 {
@@ -10,8 +8,25 @@ namespace csharp_pwa_csom
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
-            Console.ReadKey();
+            string tenantUrl = "https://tenant.sharepoint.com";
+            string siteUrl = "/sites/pwa";
+            var creds = CredentialManager.GetSharePointOnlineCredential(tenantUrl);
+
+            using (ProjectContext ctx = new ProjectContext(tenantUrl + siteUrl))
+            {
+                ctx.Credentials = creds;
+
+                var projects = ctx.Projects;
+                ctx.Load(projects);
+                ctx.ExecuteQuery();
+
+                foreach(var project in projects)
+                {
+                    Console.WriteLine($"Project Name: {project.Name}");                    
+                }
+
+                Console.ReadLine();
+            }
         }
     }
 }
